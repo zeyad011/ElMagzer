@@ -1,0 +1,39 @@
+[
+  {
+    "storeName": "مخزن 1",
+    "HeightCapacity": 300
+  },
+  {
+    "storeName": "مخزن 2",
+    "HeightCapacity": 200
+  },
+  {
+    "storeName": "مخزن 3",
+    "HeightCapacity": 400
+  },
+  {
+    "storeName": "مخزن 4",
+    "HeightCapacity": 430
+  },
+  {
+    "storeName": "مخزن 5",
+    "HeightCapacity": 120
+  },
+  {
+    "storeName": "مخزن 6",
+    "HeightCapacity": 140
+  },
+  {
+    "storeName": "مخزن 7",
+    "HeightCapacity": 500
+  },
+  {
+    "storeName": "مخزن 8",
+    "HeightCapacity": 320
+  },
+  {
+    "storeName": "مخزن 9",
+    "HeightCapacity": 250
+  }
+  ]
+  

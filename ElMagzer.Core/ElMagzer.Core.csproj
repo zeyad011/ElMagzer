@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Models\Orders.cs~RF1337980.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Specifications\SpecParams\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+   <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
+   <PackageReference Include="System.Collections" Version="4.3.0" />
+<PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+<PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+<PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ElMagzer.Shared\ElMagzer.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

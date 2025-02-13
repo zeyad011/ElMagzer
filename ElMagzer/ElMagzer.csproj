@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+	<TargetFramework>net8.0</TargetFramework>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Hangfire.AspNetCore" Version="1.8.17" />
+	<PackageReference Include="Hangfire.Core" Version="1.8.17" />
+	<PackageReference Include="Hangfire.SqlServer" Version="1.8.17" />
+	<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.11" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Scalar.AspNetCore" Version="1.2.44" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+	<PackageReference Include="System.Collections" Version="4.3.0" />
+	<PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+	<PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+	<PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\ElMagzer.Service\ElMagzer.Service.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,67 @@
+[
+  {
+    "Code": "1",
+    "CutName": "Ribeye",
+    "Date": "2024-12-01"
+  },
+  {
+    "Code": "2",
+    "CutName": "Tenderloin",
+    "Date": "2024-12-02"
+  },
+  {
+    "Code": "3",
+    "CutName": "Sirloin",
+    "Date": "2024-12-03"
+  },
+  {
+    "Code": "4",
+    "CutName": "T-Bone",
+    "Date": "2024-12-04"
+  },
+  {
+    "Code": "5",
+    "CutName": "Chuck",
+    "Date": "2024-12-05"
+  },
+  {
+    "Code": "6",
+    "CutName": "Flank",
+    "Date": "2024-12-06"
+  },
+  {
+    "Code": "7",
+    "CutName": "Brisket",
+    "Date": "2024-12-07"
+  },
+  {
+    "Code": "8",
+    "CutName": "Shank",
+    "Date": "2024-12-08"
+  },
+  {
+    "Code": "9",
+    "CutName": "Rump",
+    "Date": "2024-12-09"
+  },
+  {
+    "Code": "10",
+    "CutName": "Short Loin",
+    "Date": "2024-12-10"
+  },
+  {
+    "Code": "11",
+    "CutName": "Top Sirloin",
+    "Date": "2024-12-11"
+  },
+  {
+    "Code": "12",
+    "CutName": "Bottom Sirloin",
+    "Date": "2024-12-12"
+  },
+  {
+    "Code": "13",
+    "CutName": "Plate",
+    "Date": "2024-12-13"
+  }
+]

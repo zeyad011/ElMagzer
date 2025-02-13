@@ -1,0 +1,77 @@
+[
+  {
+    "CowsId": "18220",
+    "weight": 650.5,
+    "TypeofCowsId": 1
+  },
+  {
+    "CowsId": "18221",
+    "weight": 420.0,
+    "TypeofCowsId": 2
+  },
+  {
+    "CowsId": "18222",
+    "weight": 651.7,
+    "TypeofCowsId": 2
+  },
+  {
+    "CowsId": "18223",
+    "weight": 650,
+    "TypeofCowsId": 1
+  },
+  {
+    "CowsId": "18224",
+    "weight": 350,
+    "TypeofCowsId": 2
+  },
+  {
+    "CowsId": "18225",
+    "weight": 460,
+    "TypeofCowsId": 6
+  },
+  {
+    "CowsId": "18225",
+    "weight": 600,
+    "TypeofCowsId": 3
+  },
+  {
+    "CowsId": "18226",
+    "weight": 250,
+    "TypeofCowsId": 2
+  },
+  {
+    "CowsId": "18227",
+    "weight": 600,
+    "TypeofCowsId": 4
+  },
+  {
+    "CowsId": "18228",
+    "weight": 360,
+    "TypeofCowsId": 6
+  },
+  {
+    "CowsId": "18229",
+    "weight": 321,
+    "TypeofCowsId": 4
+  },
+  {
+    "CowsId": "18230",
+    "weight": 900,
+    "TypeofCowsId": 1
+  },
+  {
+    "CowsId": "18231",
+    "weight": 400,
+    "TypeofCowsId": 3
+  },
+  {
+    "CowsId": "18232",
+    "weight": 321,
+    "TypeofCowsId": 4
+  },
+  {
+    "CowsId": "18233",
+    "weight": 360,
+    "TypeofCowsId": 6
+  }
+]
