@@ -837,7 +837,10 @@ namespace ElMagzer.Service
                         .ThenInclude(batch => batch.CowsPieces)
                 .Include(client => client.Orders)
                     .ThenInclude(order => order.Batches)
-                        .ThenInclude(batch => batch.CowPieces2);
+                        .ThenInclude(batch => batch.CowPieces2)
+                .Include(client => client.Orders)
+                    .ThenInclude(order => order.Batches)
+                       .ThenInclude(batch => batch.Cows);
 
 
             var clientsData = await query.ToListAsync();
@@ -848,7 +851,7 @@ namespace ElMagzer.Service
                 ClientName = client.Name,
                 Code = client.Code,
                 LastOrder = client.Orders
-                    .Where(order => order.status == "Success" || order.status == "Failed")
+                    .Where(order => order.status == "Success")
                     .OrderByDescending(order => order.CreatedDate)
                     .Select(order => new
                     {
@@ -879,7 +882,8 @@ namespace ElMagzer.Service
         {
             return order.Batches.Sum(batch =>
                 batch.CowsPieces.Sum(cp => cp.pieceWeight_In) +
-                batch.CowPieces2.Sum(cp2 => cp2.Weight)
+                batch.CowPieces2.Sum(cp2 => cp2.Weight) +
+                batch.Cows.Sum(cow => cow.Cow_Weight??0)
             );
         }
         private static double GetTotalQuantity(IEnumerable<Orders> orders)
@@ -888,7 +892,8 @@ namespace ElMagzer.Service
                 .SelectMany(order => order.Batches)
                 .Sum(batch =>
                     batch.CowsPieces.Sum(cp => cp.pieceWeight_In) +
-                    batch.CowPieces2.Sum(cp2 => cp2.Weight)
+                    batch.CowPieces2.Sum(cp2 => cp2.Weight) +
+                    batch.Cows.Sum(cow => cow.Cow_Weight??0)
                 );
         }
 

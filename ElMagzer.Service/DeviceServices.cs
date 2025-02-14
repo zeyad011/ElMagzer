@@ -171,12 +171,19 @@ namespace ElMagzer.Service
             {
                 return new BadRequestObjectResult(new ApiResponse(400, "Store capacity exceeded"));
             }
+            string pieceId;
             Random random = new Random();
-            int randomSixDigits = random.Next(100, 999);
+            do
+            {
+                int randomSixDigits = random.Next(100, 999);
+                pieceId = $"{cow.CowsId}{randomSixDigits}";
+            }
+            while (await _context.CowsPieces.AnyAsync(cp => cp.pieceId == pieceId));
+
             var cowPiece = new CowsPieces
             {
                 CowId = cow.Id,
-                pieceId = $"{cow.CowsId}{randomSixDigits}",
+                pieceId = pieceId,
                 PieceTybe = pieceType,
                 Tybe = Type,
                 machien_Id_Device2 = MachId,
@@ -367,7 +374,8 @@ namespace ElMagzer.Service
 
             var cowPiece = await _context.CowsPieces
                              .Include(cp => cp.Batch)
-                             .ThenInclude(b => b.Order) 
+                             .ThenInclude(b => b.Order)
+                             .Include(cp => cp.Store)
                              .FirstOrDefaultAsync(cp => cp.pieceId == pieceId);
 
             if (cowPiece == null)
@@ -398,7 +406,14 @@ namespace ElMagzer.Service
             cowPiece.Status = statusType(status);
             cowPiece.Create_At_Divece3 = DateTime.Now;
             await _context.SaveChangesAsync();
-
+            if (cowPiece.Store != null && cowPiece.Store.quantity > 0)
+            {
+                cowPiece.Store.quantity -= 1; 
+            }
+            else
+            {
+                return new BadRequestObjectResult(new ApiResponse(400, "Insufficient stock in store"));
+            }
             var order = await _context.Orders
                     .Include(o => o.Batches) 
                     .ThenInclude(b => b.CowsPieces) 
