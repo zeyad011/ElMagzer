@@ -213,6 +213,11 @@ namespace ElMagzer.Controllers
         {
            return await _frontServices.UpdateOrderApproval(dto);
         }
+        [HttpDelete("EditeOrder")]
+        public async Task<ActionResult> DeletePiecesFromOrder([FromBody] DeletePieceDto dto)
+        {
+            return await _frontServices.DeletePiecesFromOrder(dto);
+        }
         [HttpPost("fetch-clients")]
         public async Task<IActionResult> FetchClients()
         {

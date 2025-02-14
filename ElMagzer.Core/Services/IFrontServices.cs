@@ -34,7 +34,8 @@ namespace ElMagzer.Core.Services
         public Task<ActionResult> UpdateOrderApproval(OrderApprovalDto dto);
         Task FetchAndStoreClientsAsync();
         Task FetchAndStoreSuppliersAsync();
+        public Task<ActionResult> DeletePiecesFromOrder(DeletePieceDto dto);
 
-            
+
     }
 }

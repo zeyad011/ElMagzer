@@ -1395,5 +1395,70 @@ namespace ElMagzer.Service
             }
             await _context.SaveChangesAsync();
         }
+
+        public async Task<ActionResult> DeletePiecesFromOrder(DeletePieceDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.OrderCode) || string.IsNullOrEmpty(dto.BatchCode) || dto.PieceIds == null || !dto.PieceIds.Any())
+                return new BadRequestObjectResult(new ApiResponse(400, "Invalid data"));
+
+            var order = await _context.Orders
+                .Include(o => o.Batches)
+                    .ThenInclude(b => b.CowsPieces)
+                        .ThenInclude(cp => cp.Cow)
+                .FirstOrDefaultAsync(o => o.OrderCode == dto.OrderCode);
+
+            if (order == null)
+                return new NotFoundObjectResult(new ApiResponse(404, "Order not found"));
+
+            var batch = order.Batches.FirstOrDefault(b => b.BatchCode == dto.BatchCode);
+            if (batch == null)
+                return new NotFoundObjectResult(new ApiResponse(404, "Batch not found in the given order"));
+
+            var pieces = batch.CowsPieces.Where(p => dto.PieceIds.Contains(p.pieceId)).ToList();
+
+            if (!pieces.Any())
+                return new NotFoundObjectResult(new ApiResponse(404, "No pieces found in the batch"));
+
+            var nonReversiblePieces = new List<string>();
+            var convertedPieces = new List<string>();
+
+            foreach (var piece in pieces)
+            {
+                if (piece.pieceWeight_Out != null)
+                {
+                    nonReversiblePieces.Add(piece.pieceId);
+                }
+                else
+                {
+                    if (piece.Cow != null)
+                    {
+                        piece.BatchId = piece.Cow.BatchId;
+                    }
+                    convertedPieces.Add(piece.pieceId);
+                }
+            }
+
+            if (!convertedPieces.Any())
+            {
+                return new BadRequestObjectResult(new
+                {
+                    Status = 400,
+                    Message = "Operation cannot be reversed as all selected pieces already output .",
+                    NonReversiblePieces = nonReversiblePieces
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            return new OkObjectResult(new
+            {
+                Status = 200,
+                Message = $"{convertedPieces.Count} pieces removed and returned to original batches.",
+                ConvertedPieces = convertedPieces,
+                NonReversiblePieces = nonReversiblePieces.Any()
+                    ? new { Count = nonReversiblePieces.Count, Pieces = nonReversiblePieces }
+                    : null
+            });
+        }
     }
 }
