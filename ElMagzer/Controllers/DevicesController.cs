@@ -66,5 +66,10 @@ namespace ElMagzer.Controllers
         {
             return await _deviceServices.GetLastPiece();
         }
+        [HttpGet("PushToApi")]
+        public async Task<IActionResult> SendTodayCowPieces([FromQuery] string orderNumber)
+        {
+            return await _deviceServices.SendTodayCowPieces(orderNumber);
+        }
     }
 }

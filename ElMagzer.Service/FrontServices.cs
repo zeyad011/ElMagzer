@@ -1465,5 +1465,47 @@ namespace ElMagzer.Service
                     : null
             });
         }
+
+        public async Task<ActionResult<List<CowWithPiecesDto>>> GetCowsWithPiecesByDate(DateTime date)
+        {
+            var cows = await _context.Cows
+                        .Where(c => c.Create_At_Divece1.Date == date.Date)
+                        .Include(c => c.CowMiscarriages)
+                        .Include(c => c.Batch)
+                        .ThenInclude(c=>c.Order)
+                        .Include(c => c.CowsSeed)
+                        .Include(c => c.TypeofCows)
+                        .ToListAsync();
+
+            if (cows == null || cows.Count == 0)
+            {
+                return new NotFoundObjectResult(new ApiResponse(404, "No cows found for the given date"));
+            }
+
+            var cowsWithPieces = cows.Select(cow => new CowWithPiecesDto
+            {
+                CowsId = cow.CowsId,
+                Cow_Weight = cow.Cow_Weight,
+                batch = cow.Batch.BatchCode,
+                order = cow.Batch.Order.OrderCode,
+                CowType = cow.TypeofCows.TypeName,
+                Doctor = cow.Doctor_Id,
+                Tech = cow.techOfDevice1,
+                Create_At_Divece1 = cow.Create_At_Divece1,
+                Pieces = _context.CowsPieces
+            .Where(p => p.CowId == cow.Id)
+            .Select(p => new CowPieceDto
+            {
+                PieceId = p.pieceId,
+                PieceWeight_In = p.pieceWeight_In,
+                PieceWeight_Out = p.pieceWeight_Out,
+                PieceType = p.PieceTybe,
+                
+                Status = p.Status
+            }).ToList()
+            }).ToList();
+
+            return new OkObjectResult(cowsWithPieces);
+        }
     }
 }

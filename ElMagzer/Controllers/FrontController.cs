@@ -230,5 +230,11 @@ namespace ElMagzer.Controllers
             await _frontServices.FetchAndStoreSuppliersAsync();
             return Ok("Suppliers fetched and stored successfully.");
         }
+        [HttpGet("GetCowsWithPiecesByDate")]
+        public async Task<ActionResult<List<CowWithPiecesDto>>> GetCowsWithPiecesByDate([FromQuery] DateTime date)
+        {
+            return await _frontServices.GetCowsWithPiecesByDate(date);
+        }
+
     }
 }

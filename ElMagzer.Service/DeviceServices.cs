@@ -633,5 +633,32 @@ namespace ElMagzer.Service
             return new OkObjectResult(response);
         }
 
+        public async Task<IActionResult> SendTodayCowPieces([FromQuery] string orderNumber)
+        {
+            var today = DateTime.UtcNow.Date;
+            var cowPieces = await _context.CowsPieces
+                .Where(p => p.Create_At_Divece2.Date == today)
+                .Include(cp=>cp.Batch)
+                .Include(cp=>cp.Cow)
+                .Include(cp=>cp.Store)
+                .ToListAsync();
+
+            if (!cowPieces.Any())
+            {
+                return new NotFoundObjectResult(new { Message = "No cow pieces found for today." });
+            }
+
+            foreach (var piece in cowPieces)
+            {
+                bool isSent = await SendCowPieceDataToExternalApi(piece, orderNumber,piece.Store.Id.ToString());
+
+                if (!isSent)
+                {
+                    return new BadRequestObjectResult(new { Message = $"Failed to send cow piece {piece.pieceId}." });
+                }
+            }
+
+            return new OkObjectResult(new { Message = "All cow pieces for today have been sent successfully!" });
+        }
     }
 }

@@ -6,6 +6,8 @@ namespace ElMagzer.Shared.Dtos
     public class AddCowSeedDto
     {
         [Required]
+        public string numberOfCow { get; set; }
+        [Required]
         public double Weight { get; set; }
 
         [Required]

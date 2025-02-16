@@ -662,26 +662,26 @@ namespace ElMagzer.Service
             {
                 return new NotFoundObjectResult(new ApiResponse(404, "SuppliersId not found"));
             }
-            string weightStr = dto.Weight.ToString("F0"); 
+            //string weightStr = dto.Weight.ToString("F0"); 
 
-            if (weightStr.Length < 6)
-            {
-                return new BadRequestObjectResult(new ApiResponse(400, "Invalid weight format. Expected at least 6 digits."));
-            }
+            //if (weightStr.Length < 6)
+            //{
+            //    return new BadRequestObjectResult(new ApiResponse(400, "Invalid weight format. Expected at least 6 digits."));
+            //}
 
-            string cowsId = weightStr.Substring(0, 5);
-            string remainingWeightStr = weightStr.Substring(5);
+            //string cowsId = weightStr.Substring(0, 5);
+            //string remainingWeightStr = weightStr.Substring(5);
 
-            if (!double.TryParse(remainingWeightStr, out double extractedWeight))
-            {
-                return new BadRequestObjectResult(new ApiResponse(400, "Invalid weight format after extraction."));
-            }
+            //if (!double.TryParse(remainingWeightStr, out double extractedWeight))
+            //{
+            //    return new BadRequestObjectResult(new ApiResponse(400, "Invalid weight format after extraction."));
+            //}
             var random = new Random();
-
+            string cowsId = dto.numberOfCow;
             var cowSeed = new CowsSeed
             {
                 CowsId = cowsId,
-                weight = extractedWeight,
+                weight = dto.Weight,
                 TypeofCowsId = dto.TypeofCowsId,
                 clientId = dto.ClientId,
                 suppliersId = dto.SuppliersId,

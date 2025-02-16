@@ -16,5 +16,7 @@ namespace ElMagzer.Core.Services
         public Task<IActionResult> GetLastPiece();
         
         public Task<bool> SendCowPieceDataToExternalApi(CowsPieces cowPiece, string orderNumber, string store);
+
+        public Task<IActionResult> SendTodayCowPieces([FromQuery] string orderNumber);
     }
 }
