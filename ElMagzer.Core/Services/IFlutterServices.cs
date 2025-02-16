@@ -24,6 +24,7 @@ namespace ElMagzer.Core.Services
         public Task<ActionResult> GetDetails();
         public Task<ActionResult> AddCowSeed(AddCowSeedDto dto);
         public Task<ActionResult> ProcessMeatSalesOrder(List<string> pieceIds);
+        public Task<IActionResult> GetUnprocessedRecoveryPieces();
 
     }
 }

@@ -124,5 +124,10 @@ namespace ElMagzer.Controllers
         {
             return await _flutterServices.ProcessMeatSalesOrder(request.Numbers);
         }
+        [HttpGet("GetUnprocessedRecoveryPieces")]
+        public async Task<IActionResult> GetUnprocessedRecoveryPieces()
+        {
+            return await _flutterServices.GetUnprocessedRecoveryPieces();
+        }
     }
 }

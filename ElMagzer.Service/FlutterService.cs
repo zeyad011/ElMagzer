@@ -835,5 +835,38 @@ namespace ElMagzer.Service
                 BatchCode = batchCode
             });
         }
+
+        public async Task<IActionResult> GetUnprocessedRecoveryPieces()
+        {
+            var pieces = await _context.CowsPieces
+                .Include(cp => cp.Batch)
+                .ThenInclude(b => b.Order)
+                .Where(cp => cp.Batch != null &&
+                             cp.Batch.Order != null &&
+                             cp.Batch.Order.OrederType == "تشافي" &&
+                             cp.pieceWeight_Out == null)
+                .ToListAsync();
+
+            var groupedResult = pieces
+                .GroupBy(cp => cp.PieceTybe) 
+                .Select(group => new
+                {
+                    PieceType = group.Key, 
+                    Pieces = group.Select(cp => new
+                    {
+                        PieceId = cp.pieceId,
+                        piece_Weight_In = cp.pieceWeight_In,
+                        Batch = cp.BatchId,
+                        Order = cp.Batch.OrderId,
+                        OrderType = cp.Batch.Order.OrederType,
+                        Store = cp.StoreId,
+                    }).ToList()
+                })
+                .ToList();
+
+            return new OkObjectResult(groupedResult);
+        }
+
+
     }
 }
