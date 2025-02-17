@@ -641,88 +641,117 @@ namespace ElMagzer.Service
             return new OkObjectResult(result);
         }
 
-        public async Task<ActionResult> AddCowSeed(AddCowSeedDto dto)
+        public async Task<ActionResult> AddCowSeeds(AddCowSeedRequestDto request)
         {
-            var typeOfCow = await _context.TypeofCows.FirstOrDefaultAsync(t => t.Id == dto.TypeofCowsId);
+            if (request?.Cows == null || !request.Cows.Any())
+            {
+                return new BadRequestObjectResult(new ApiResponse(400, "No cows provided"));
+            }
+
+            var dtos = request.Cows; 
+
+            var typeOfCow = await _context.TypeofCows.FirstOrDefaultAsync(t => t.Id == dtos.First().TypeofCowsId);
             if (typeOfCow == null)
             {
                 return new NotFoundObjectResult(new ApiResponse(404, "TypeofCowsId not found"));
             }
 
-
-            var clientExists = await _context.clients.AnyAsync(c => c.Id == dto.ClientId);
+            var clientExists = await _context.clients.AnyAsync(c => c.Id == dtos.First().ClientId);
             if (!clientExists)
             {
                 return new NotFoundObjectResult(new ApiResponse(404, "ClientId not found"));
             }
 
-
-            var supplierExists = await _context.suppliers.AnyAsync(s => s.Id == dto.SuppliersId);
+            var supplierExists = await _context.suppliers.AnyAsync(s => s.Id == dtos.First().SuppliersId);
             if (!supplierExists)
             {
                 return new NotFoundObjectResult(new ApiResponse(404, "SuppliersId not found"));
             }
-            //string weightStr = dto.Weight.ToString("F0"); 
 
-            //if (weightStr.Length < 6)
-            //{
-            //    return new BadRequestObjectResult(new ApiResponse(400, "Invalid weight format. Expected at least 6 digits."));
-            //}
+            var existingCowIds = await _context.cowsSeeds
+                                              .Where(c => dtos.Select(d => d.numberOfCow).Contains(c.CowsId))
+                                              .Select(c => c.CowsId)
+                                              .ToListAsync();
 
-            //string cowsId = weightStr.Substring(0, 5);
-            //string remainingWeightStr = weightStr.Substring(5);
+            var newCows = dtos.Where(d => !existingCowIds.Contains(d.numberOfCow)).ToList();
 
-            //if (!double.TryParse(remainingWeightStr, out double extractedWeight))
-            //{
-            //    return new BadRequestObjectResult(new ApiResponse(400, "Invalid weight format after extraction."));
-            //}
-            var random = new Random();
-            string cowsId = dto.numberOfCow;
-            var cowSeed = new CowsSeed
+            if (!newCows.Any())
             {
-                CowsId = cowsId,
-                weight = dto.Weight,
-                TypeofCowsId = dto.TypeofCowsId,
-                clientId = dto.ClientId,
-                suppliersId = dto.SuppliersId,
-            };
-            await _context.cowsSeeds.AddAsync(cowSeed);
-            await _context.SaveChangesAsync();
+                return new ConflictObjectResult(new
+                {
+                    Message = "All cows already exist.",
+                    ExistingCows = existingCowIds
+                });
+            }
+
+            var random = new Random();
             var orderCode = "ORD-" + random.Next(100000, 999999).ToString();
+
             var order = new Orders
             {
                 OrderCode = orderCode,
                 OrederType = "ذبح",
-                numberofCows = 1,
+                numberofCows = newCows.Count,
                 numberofbatches = 1,
-                ClientsId = dto.ClientId,
+                ClientsId = newCows.First().ClientId,
                 EndDate = DateTime.UtcNow.AddDays(2),
                 status = "Pending"
             };
+
             await _context.Orders.AddAsync(order);
             await _context.SaveChangesAsync();
+
             var batchCode = random.Next(100000, 999999).ToString();
+
             var batch = new Batch
             {
                 BatchCode = batchCode,
                 BatchType = "ذبح",
                 OrderId = order.Id,
-                numberOfCowOrPieces = 1,
+                numberOfCowOrPieces = newCows.Count,
                 CowOrPiecesType = typeOfCow.TypeName,
             };
+
             await _context.Batches.AddAsync(batch);
             await _context.SaveChangesAsync();
 
+            var cowsSeeds = new List<CowsSeed>();
 
-            cowSeed.BatchId = batch.Id;
+            foreach (var dto in newCows)
+            {
+                var cowSeed = new CowsSeed
+                {
+                    CowsId = dto.numberOfCow,
+                    weight = dto.Weight,
+                    TypeofCowsId = dto.TypeofCowsId,
+                    clientId = dto.ClientId,
+                    suppliersId = dto.SuppliersId,
+                    BatchId = batch.Id
+                };
+
+                cowsSeeds.Add(cowSeed);
+            }
+
+            await _context.cowsSeeds.AddRangeAsync(cowsSeeds);
             await _context.SaveChangesAsync();
-            await _hubContext.Clients.All.SendAsync("ReceiveCowId", cowsId);
+
+
+            foreach (var cow in cowsSeeds)
+            {
+                await _hubContext.Clients.All.SendAsync("ReceiveCowId", cow.CowsId);
+            }
+
             return new OkObjectResult(new
             {
-                Message = "Cow seed added successfully and slaughter order created",
-                CowsId = cowsId
+                Message = "Cow seeds added successfully.",
+                OrderCode = orderCode,
+                BatchCode = batchCode,
+                TotalNewCows = newCows.Count,
+                ExistingCows = existingCowIds
             });
         }
+
+
 
         public async Task<ActionResult> GetBoneInSalesOrders()
         {

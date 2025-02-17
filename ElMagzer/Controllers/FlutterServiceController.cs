@@ -114,9 +114,9 @@ namespace ElMagzer.Controllers
         }
         [Authorize]
         [HttpPost("AddCowSeed")]
-        public async Task<IActionResult> AddCowSeed([FromBody] AddCowSeedDto dto)
+        public async Task<IActionResult> AddCowSeed([FromBody] AddCowSeedRequestDto dtos)
         {
-            return await _flutterServices.AddCowSeed(dto);
+            return await _flutterServices.AddCowSeeds(dtos);
         }
         [Authorize]
         [HttpPost("SealsPieces")]
