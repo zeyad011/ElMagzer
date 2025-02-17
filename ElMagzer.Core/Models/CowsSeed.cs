@@ -11,6 +11,7 @@ namespace ElMagzer.Core.Models
         public string CowsId { get; set; }
 
         public double weight { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public bool IsPrinted { get; set; } = false;
         public int TypeofCowsId { get; set; }
         public TypeofCows TypeofCows { get; set; }

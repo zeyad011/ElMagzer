@@ -1248,7 +1248,7 @@ namespace ElMagzer.Service
                 {
                     var cow = new CowsSeed
                     {
-                        CowsId = line.SerialId,
+                        CowsId = line.SerialId.Substring(0, 5),
                         weight = line.Weight,
                         TypeofCowsId = cowType.Id,
                         clientId = client.Id,
@@ -1271,7 +1271,7 @@ namespace ElMagzer.Service
                              Quntity = workOrder.linesResponse.Count,
                              Cows = workOrder.linesResponse.Select(l => new CowDto
                              {
-                                 CowId = l.SerialId
+                                 CowId = l.SerialId.Substring(0, 5)
                              }).ToList()
                          }
                      }

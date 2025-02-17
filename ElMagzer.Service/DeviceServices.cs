@@ -534,9 +534,11 @@ namespace ElMagzer.Service
 
         public async Task<ActionResult> GetLastCowsId()
         {
+            var today = DateTime.Today; 
+
             var lastCow = await _context.cowsSeeds
-                    .Where(c => !c.IsPrinted)
-                    .FirstOrDefaultAsync();
+                .Where(c => !c.IsPrinted && c.CreatedAt.Date == today) 
+                .FirstOrDefaultAsync();
 
             if (lastCow == null)
             {
