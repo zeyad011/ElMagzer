@@ -662,5 +662,85 @@ namespace ElMagzer.Service
 
             return new OkObjectResult(new { Message = "All cow pieces for today have been sent successfully!" });
         }
+
+        public async Task<ActionResult> UpdateLastCowPieceAsync(double newWeight, int newStoreId)
+        {
+            var lastCowPiece = await _context.CowsPieces
+                .Include(cp => cp.Cow)
+                .ThenInclude(c => c.CowsSeed)
+                .ThenInclude(cs => cs.suppliers)
+                .Include(cp => cp.Batch)
+                .ThenInclude(b => b.Order)
+                .ThenInclude(o => o.Clients)
+                .Include(cp => cp.Cow)
+                .ThenInclude(cp=>cp.TypeofCows)
+                .OrderByDescending(cp => cp.Id)
+                .FirstOrDefaultAsync();
+
+            if (lastCowPiece == null)
+            {
+                return new NotFoundObjectResult(new { statusCode = 404, message = "No cow piece found" });
+            }
+
+            var oldStore = await _context.Stores.FindAsync(lastCowPiece.StoreId);
+            var newStore = await _context.Stores.FindAsync(newStoreId);
+
+            if (newStore == null)
+            {
+                return new NotFoundObjectResult(new { statusCode = 404, message = "NO1" });//New store not found
+            }
+
+
+            if (newStore.quantity >= newStore.HeightCapacity)
+            {
+                return new BadRequestObjectResult(new { statusCode = 400, message = "NO2" });//New store capacity exceeded
+            }
+
+
+            lastCowPiece.pieceWeight_In = newWeight;
+
+
+            if (lastCowPiece.StoreId != newStoreId)
+            {
+
+                if (oldStore != null && oldStore.quantity > 0)
+                {
+                    oldStore.quantity -= 1;
+                }
+
+
+                newStore.quantity += 1;
+
+
+                lastCowPiece.StoreId = newStoreId;
+            }
+
+            await _context.SaveChangesAsync();
+
+            var messageParts = new[]
+            {
+        $"OK1 Z{lastCowPiece?.pieceId ?? "null"}",
+        $"{lastCowPiece?.Cow?.CowsSeed?.suppliers?.NameENG ?? "null"}",
+        $"{lastCowPiece?.Batch?.Order?.Clients?.NameENG ?? "null"}",
+        $"{(lastCowPiece?.BatchId.HasValue == true ? lastCowPiece.BatchId.ToString() : "null")}",
+        $"{lastCowPiece?.Batch?.Order?.OrderCode ?? "null"}",
+        $"{lastCowPiece?.Cow?.TypeofCows?.TypeNameENG ?? "null"}",
+        $"{mapTypee3(lastCowPiece?.Tybe ?? 1)} {lastCowPiece?.Tybe ?? 1}",
+        $"{newWeight}",
+        $"{lastCowPiece?.Create_At_Divece2.ToString("dd/MM/yy") ?? "null"}"
+    };
+
+            var resultMessage = $"{string.Join(",", messageParts)}L";
+
+            var response = new
+            {
+                statusCode = 200,
+                message = resultMessage
+            };
+
+            return new OkObjectResult(response);
+        }
+
+
     }
 }

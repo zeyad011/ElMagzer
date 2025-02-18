@@ -880,20 +880,24 @@ namespace ElMagzer.Service
 
         public async Task<IActionResult> GetUnprocessedRecoveryPieces()
         {
+            var today = DateTime.Now.Date;
+
             var pieces = await _context.CowsPieces
                 .Include(cp => cp.Batch)
                 .ThenInclude(b => b.Order)
                 .Where(cp => cp.Batch != null &&
                              cp.Batch.Order != null &&
                              cp.Batch.Order.OrederType == "تشافي" &&
-                             cp.pieceWeight_Out == null)
+                             cp.pieceWeight_Out == null &&
+                             cp.Batch.Order.Date.HasValue &&
+                             cp.Batch.Order.Date.Value.Date == today)
                 .ToListAsync();
 
             var groupedResult = pieces
-                .GroupBy(cp => cp.PieceTybe) 
+                .GroupBy(cp => cp.PieceTybe)
                 .Select(group => new
                 {
-                    PieceType = group.Key, 
+                    PieceType = group.Key,
                     Pieces = group.Select(cp => new
                     {
                         PieceId = cp.pieceId,
@@ -902,12 +906,14 @@ namespace ElMagzer.Service
                         Order = cp.Batch.OrderId,
                         OrderType = cp.Batch.Order.OrederType,
                         Store = cp.StoreId,
+                        OrderDate = cp.Batch.Order.Date 
                     }).ToList()
                 })
                 .ToList();
 
             return new OkObjectResult(groupedResult);
         }
+
 
 
     }

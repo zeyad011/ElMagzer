@@ -235,6 +235,10 @@ namespace ElMagzer.Controllers
         {
             return await _frontServices.GetCowsWithPiecesByDate(date);
         }
-
+        [HttpGet("GetPiecesByCowId")]
+        public async Task<ActionResult<List<CowPieceDto>>> GetPiecesByCowId(string CowId)
+        {
+            return await _frontServices.GetPiecesByCowId(CowId);
+        }
     }
 }

@@ -71,5 +71,25 @@ namespace ElMagzer.Controllers
         {
             return await _deviceServices.SendTodayCowPieces(orderNumber);
         }
+        [HttpGet("now")]
+        public IActionResult GetCurrentTime()
+        {
+            var localTime = DateTime.Now;
+            var utcTime = DateTime.UtcNow;
+            var timeZone = TimeZoneInfo.Local.Id;
+
+            return Ok(new
+            {
+                LocalTime = localTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                UtcTime = utcTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                TimeZone = timeZone
+            });
+        }
+        [HttpPost("updateLastPiece")]
+        public async Task<ActionResult> UpdateLastCowPiece(double newWeight, int newStoreId)
+        {
+            return await _deviceServices.UpdateLastCowPieceAsync(newWeight, newStoreId);
+        }
+
     }
 }

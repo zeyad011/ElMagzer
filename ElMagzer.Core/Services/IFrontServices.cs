@@ -35,6 +35,7 @@ namespace ElMagzer.Core.Services
         Task FetchAndStoreClientsAsync();
         Task FetchAndStoreSuppliersAsync();
         public Task<ActionResult> DeletePiecesFromOrder(DeletePieceDto dto);
-        Task<ActionResult<List<CowWithPiecesDto>>> GetCowsWithPiecesByDate(DateTime date);
+        Task <ActionResult<List<CowWithPiecesDto>>> GetCowsWithPiecesByDate(DateTime date);
+        public  Task<ActionResult<List<CowPieceDto>>> GetPiecesByCowId(string cowId);
     }
 }

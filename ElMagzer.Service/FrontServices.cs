@@ -1507,5 +1507,29 @@ namespace ElMagzer.Service
 
             return new OkObjectResult(cowsWithPieces);
         }
+        public async Task<ActionResult<List<CowPieceDto>>> GetPiecesByCowId(string cowId)
+        {
+            var cow = await _context.Cows
+               .FirstOrDefaultAsync(c => c.CowsId == cowId);
+            var pieces = await _context.CowsPieces
+             .Where(p => p.CowId == cow.Id) 
+             .Select(p => new CowPieceDto
+             {
+                 PieceId = p.pieceId,
+                 PieceWeight_In = p.pieceWeight_In,
+                 PieceWeight_Out = p.pieceWeight_Out,
+                 PieceType = p.PieceTybe,
+                 Status = p.Status
+             })
+             .ToListAsync();
+
+                 if (pieces == null || pieces.Count == 0)
+                 {
+                     return new NotFoundObjectResult(new ApiResponse(404, "No pieces found for the given cowId"));
+                 }
+
+                 return new OkObjectResult(pieces);
+        }
+
     }
 }

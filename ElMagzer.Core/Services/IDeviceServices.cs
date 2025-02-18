@@ -1,4 +1,5 @@
 ﻿using ElMagzer.Core.Models;
+using ElMagzer.Shared.Errors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElMagzer.Core.Services
@@ -18,5 +19,6 @@ namespace ElMagzer.Core.Services
         public Task<bool> SendCowPieceDataToExternalApi(CowsPieces cowPiece, string orderNumber, string store);
 
         public Task<IActionResult> SendTodayCowPieces([FromQuery] string orderNumber);
+        public Task<ActionResult> UpdateLastCowPieceAsync(double newWeight, int newStoreId);
     }
 }
