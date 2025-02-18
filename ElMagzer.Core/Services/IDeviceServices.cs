@@ -20,5 +20,6 @@ namespace ElMagzer.Core.Services
 
         public Task<IActionResult> SendTodayCowPieces([FromQuery] string orderNumber);
         public Task<ActionResult> UpdateLastCowPieceAsync(double newWeight, int newStoreId);
+        public Task<bool> SendDevice4DataToExternalApi(Cow_Pieces_2 cowPiece, int storeId);
     }
 }

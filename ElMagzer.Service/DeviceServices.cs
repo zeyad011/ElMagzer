@@ -280,17 +280,29 @@ namespace ElMagzer.Service
             #endregion
             //var Result = $"OK1 Z{cowPiece.pieceId},ElRawda,{cowPiece.Batch.Order.Clients},{cowPiece.Batch.BatchCode},{cowPiece.Batch.Order.OrderCode},Baaldy,left Shoulder,{weight},{cowPiece.Create_At_Divece2.ToString("dd/MM/yy")}L";
 
-            var messageParts = new[]
-                     {
+            //var messageParts = new[]//barcode type number of type 
+            //         {
+            //         $"OK1 Z{cowPiece?.pieceId ?? "null"}",
+            //         $"{cowPiece ?.Cow ?.CowsSeed.suppliers.NameENG ?? "null"}",
+            //         $"{cowPiece ?.Batch ?.Order ?.Clients ?.NameENG ?? "null"}",
+            //         $"{(cowPiece?.BatchId.HasValue == true ? cowPiece.BatchId.ToString() : "null")}",
+            //         $"{cowPiece?.Batch?.Order?.OrderCode ?? "null"}",
+            //         $"{cowPiece?.Cow.TypeofCows.TypeNameENG ??"null"}",
+            //         $"{mapTypee3(Type)} {Type}",
+            //         $"{weight}",
+            //         $"{cowPiece?.Create_At_Divece2.ToString("dd/MM/yy") ?? "null"}"
+            //         };
+            var messageParts = new[]//barcode type number of type 
+                    {
                      $"OK1 Z{cowPiece?.pieceId ?? "null"}",
-                     $"{cowPiece ?.Cow ?.CowsSeed.suppliers.NameENG ?? "null"}",
-                     $"{cowPiece ?.Batch ?.Order ?.Clients ?.NameENG ?? "null"}",
-                     $"{(cowPiece?.BatchId.HasValue == true ? cowPiece.BatchId.ToString() : "null")}",
-                     $"{cowPiece?.Batch?.Order?.OrderCode ?? "null"}",
-                     $"{cowPiece?.Cow.TypeofCows.TypeNameENG ??"null"}",
+                     $"Null",
+                     $"Null",
+                     $"Null",
+                     $"Null",
+                     $"Null",
                      $"{mapTypee3(Type)} {Type}",
-                     $"{weight}",
-                     $"{cowPiece?.Create_At_Divece2.ToString("dd/MM/yy") ?? "null"}"
+                     $"Null",
+                     $"Null"
                      };
             var Result = $"{string.Join(",", messageParts)}L";
 
@@ -477,6 +489,11 @@ namespace ElMagzer.Service
             _context.Cow_Pieces_2.Add(cowPiece);
             store.quantity = (store.quantity ?? 0) + 1;
             await _context.SaveChangesAsync();
+            bool isSent = await SendDevice4DataToExternalApi(cowPiece, storeId);
+            if (!isSent)
+            {
+                return new BadRequestObjectResult(new ApiResponse(400, "Failed to send data to external API"));
+            }
             var response = new
             {
                 statusCode = 200,
@@ -741,6 +758,51 @@ namespace ElMagzer.Service
             return new OkObjectResult(response);
         }
 
+        public async Task<bool> SendDevice4DataToExternalApi(Cow_Pieces_2 cowPiece, int storeId)
+        {
+            var token = await _frontServices.GetAuthToken();
+            if (string.IsNullOrWhiteSpace(token))
+                throw new Exception("Failed to retrieve authentication token.");
+
+
+            var requestData = new
+            {
+                TypeId = 2, 
+                CompanyID = "003",
+                OrderNumber = "OR-0000011", 
+                Itemid = "10-3028",
+                Weight = cowPiece.Weight,
+                BarCode = cowPiece.PieceNumber,
+                TransDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                Store = storeId.ToString(),
+                MainItemid = "23612100"
+            };
+
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(requestData),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            using var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post,
+                "https://shatat-uat.sandbox.operations.dynamics.com/api/Services/Sha_IntegrationServiceGroup/Sha_IntegrationService/AddBarCodeWeightByType")
+            {
+                Content = jsonContent
+            };
+            request.Headers.Add("Authorization", $"Bearer {token}");
+
+            var response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Error sending data: {response.StatusCode} - {errorContent}");
+            return false;
+        }
 
     }
 }

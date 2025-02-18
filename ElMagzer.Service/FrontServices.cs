@@ -911,13 +911,13 @@ namespace ElMagzer.Service
             int piecesRequest = orders.Sum(o => o.Batches.Sum(b => b.numberOfCowOrPieces ?? 0));
 
             int soldPiecesCount = await _context.CowsPieces
-                .Where(cp => cp.Create_At_Divece2 >= targetDate && cp.Create_At_Divece2 < nextDay && cp.Status == "Out")
+                .Where(cp => cp.Create_At_Divece3 >= targetDate && cp.Create_At_Divece3 < nextDay && cp.Status == "Out")
                 .CountAsync();
 
             int reminders = piecesRequest - soldPiecesCount;
 
             double totalWeightOfSoldPieces = await _context.CowsPieces
-                .Where(cp => cp.Create_At_Divece2 >= targetDate && cp.Create_At_Divece2 < nextDay && cp.Status == "Out")
+                .Where(cp => cp.Create_At_Divece3 >= targetDate && cp.Create_At_Divece3 < nextDay && cp.Status == "Out")
                 .SumAsync(cp => cp.pieceWeight_Out ?? 0);
 
             var hours = Enumerable.Range(5, 15).Select(h => new { Hour = h, Time = targetDate.AddHours(h) }).ToList();
