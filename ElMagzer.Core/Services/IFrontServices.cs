@@ -37,5 +37,7 @@ namespace ElMagzer.Core.Services
         public Task<ActionResult> DeletePiecesFromOrder(DeletePieceDto dto);
         Task <ActionResult<List<CowWithPiecesDto>>> GetCowsWithPiecesByDate(DateTime date);
         public  Task<ActionResult<List<CowPieceDto>>> GetPiecesByCowId(string cowId);
+        public  Task<int> DeleteOldCowsPieces();
+        public  Task<int> DeleteOldCows();
     }
 }

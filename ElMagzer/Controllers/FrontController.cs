@@ -240,5 +240,25 @@ namespace ElMagzer.Controllers
         {
             return await _frontServices.GetPiecesByCowId(CowId);
         }
+        [HttpDelete("delete-old")]
+        public async Task<IActionResult> DeleteOldCowsPieces()
+        {
+            var deletedCount = await _frontServices.DeleteOldCowsPieces();
+
+            if (deletedCount == 0)
+                return NotFound(new { message = "No old pieces found for deletion." });
+
+            return Ok(new { message = $"{deletedCount} old pieces deleted successfully." });
+        }
+        [HttpDelete("delete-oldCows")]
+        public async Task<IActionResult> DeleteOldCows()
+        {
+            var deletedCount = await _frontServices.DeleteOldCows();
+
+            if (deletedCount == 0)
+                return NotFound(new { message = "No old cows found for deletion." });
+
+            return Ok(new { message = $"{deletedCount} old cows deleted successfully." });
+        }
     }
 }

@@ -498,12 +498,12 @@ namespace ElMagzer.Service
             {
                 StoreName = store.storeName,
                 TotalPieces = store.CowsPieces
-                                   .Count(cp => cp.Create_At_Divece2 >= startOfDay && cp.Create_At_Divece2 < endOfDay && cp.Status != "Out")
+                                   .Count(cp => cp.Create_At_Divece2 >= startOfDay && cp.Create_At_Divece2 < endOfDay && string.IsNullOrEmpty(cp.Status))
                                + store.CowPieces2
                                    .Count(cp2 => cp2.Create_At_Divece4 >= startOfDay && cp2.Create_At_Divece4 < endOfDay && cp2.status != "Out"),
                 TotalWeight = Math.Round(
             store.CowsPieces
-                .Where(cp => cp.Create_At_Divece2 >= startOfDay && cp.Create_At_Divece2 < endOfDay && cp.Status != "Out")
+                .Where(cp => cp.Create_At_Divece2 >= startOfDay && cp.Create_At_Divece2 < endOfDay && string.IsNullOrEmpty(cp.Status))
                 .Sum(cp => cp.pieceWeight_In)
             + store.CowPieces2
                 .Where(cp2 => cp2.Create_At_Divece4 >= startOfDay && cp2.Create_At_Divece4 < endOfDay && cp2.status != "Out")
@@ -511,13 +511,13 @@ namespace ElMagzer.Service
                 HeightCapacity = store.HeightCapacity,
                 StoreFilledPercentage = Math.Round(
                 ((store.CowsPieces
-                               .Count(cp => cp.Create_At_Divece2 >= startOfDay && cp.Create_At_Divece2 < endOfDay && cp.Status != "Out")
+                               .Count(cp => cp.Create_At_Divece2 >= startOfDay && cp.Create_At_Divece2 < endOfDay && string.IsNullOrEmpty(cp.Status))
                            + store.CowPieces2
                                .Count(cp2 => cp2.Create_At_Divece4 >= startOfDay && cp2.Create_At_Divece4 < endOfDay && cp2.status != "Out"))
                  / (double)store.HeightCapacity) * 100, 2),
 
                 Pieces = store.CowsPieces
-                    .Where(cp => cp.Create_At_Divece2 >= startOfDay && cp.Create_At_Divece2 < endOfDay && cp.Status != "Out")
+                    .Where(cp => cp.Create_At_Divece2 >= startOfDay && cp.Create_At_Divece2 < endOfDay && string.IsNullOrEmpty(cp.Status))
                     .Select(cp => new StorePieceDto
                     {
                         PieceNumber = cp.pieceId,
@@ -1531,5 +1531,38 @@ namespace ElMagzer.Service
                  return new OkObjectResult(pieces);
         }
 
+        public async Task<int> DeleteOldCowsPieces()
+        {
+            var today = DateTime.Now.Date;
+
+            var oldPieces = await _context.CowsPieces
+                .Where(p => p.Create_At_Divece2.Date != today)
+                .ToListAsync();
+
+            if (!oldPieces.Any())
+                return 0;
+
+            _context.CowsPieces.RemoveRange(oldPieces);
+            await _context.SaveChangesAsync();
+
+            return oldPieces.Count;
+        }
+
+        public async Task<int> DeleteOldCows()
+        {
+            var today = DateTime.Now.Date;
+
+            var oldCows = await _context.Cows
+                .Where(c => c.Create_At_Divece1.Date != today)
+                .ToListAsync();
+
+            if (!oldCows.Any())
+                return 0; 
+
+            _context.Cows.RemoveRange(oldCows);
+            await _context.SaveChangesAsync();
+
+            return oldCows.Count;
+        }
     }
 }
