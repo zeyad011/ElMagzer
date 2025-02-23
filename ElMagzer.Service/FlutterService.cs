@@ -460,7 +460,8 @@ namespace ElMagzer.Service
                                 Items = g.Select(p => new
                                 {
                                     PieceId = p.pieceId,
-                                    StoreNumber = p.StoreId
+                                    StoreNumber = p.StoreId,
+                                    Status = p.Status
                                 }).ToList()
                             }).ToList()
                     })

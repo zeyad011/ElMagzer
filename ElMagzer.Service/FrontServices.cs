@@ -904,7 +904,7 @@ namespace ElMagzer.Service
 
             DateTime graphTime = graphtime ?? targetDate;
             var orders = await _context.Orders
-                 .Where(o => o.CreatedDate >= targetDate && o.CreatedDate < nextDay && o.OrederType == "بيع لحم مشفي" || o.OrederType == "بيع لحم بعضم")
+                 .Where(o => o.EndDate >= targetDate && o.EndDate < nextDay && o.OrederType == "بيع لحم مشفي" || o.OrederType == "بيع لحم بعضم")
                  .Include(o => o.Batches)
                  .ToListAsync();
 
@@ -1006,7 +1006,7 @@ namespace ElMagzer.Service
 
             DateTime graphTime = graphtime ?? targetDate;
             var orders = await _context.Orders
-                 .Where(o => o.CreatedDate >= targetDate && o.CreatedDate < nextDay && o.OrederType == "تشافي")
+                 .Where(o => o.EndDate >= targetDate && o.EndDate < nextDay && o.OrederType == "تشافي")
                  .Include(o => o.Batches)
                  .ToListAsync();
 
