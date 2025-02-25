@@ -902,6 +902,7 @@ namespace ElMagzer.Service
             DateTime targetDate = date ?? DateTime.Today;
             DateTime nextDay = targetDate.AddDays(1);
 
+
             DateTime graphTime = graphtime ?? targetDate;
             var orders = await _context.Orders
                  .Where(o => o.EndDate >= targetDate && o.EndDate < nextDay && o.OrederType == "بيع لحم مشفي" || o.OrederType == "بيع لحم بعضم")
@@ -1500,8 +1501,7 @@ namespace ElMagzer.Service
                 PieceWeight_In = p.pieceWeight_In,
                 PieceWeight_Out = p.pieceWeight_Out,
                 PieceType = p.PieceTybe,
-                
-                Status = p.Status
+                Status = p.Status ?? p.Status_From_Device_2
             }).ToList()
             }).ToList();
 

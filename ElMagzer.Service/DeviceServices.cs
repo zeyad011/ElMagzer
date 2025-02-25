@@ -31,6 +31,16 @@ namespace ElMagzer.Service
                 2 => "فخده شمال",
                 3 => "زند يمين",
                 4 => "فخده يمين",
+                _ => throw new ArgumentException("Invalid Data")
+            };
+        }
+        private string mapT(int TypeOf)
+        {
+            return TypeOf switch
+            {
+                1 => "Cutting",
+                2 => "Karkas",
+                3 => "Check",
                 _ => throw new ArgumentException("Invalid cowType.")
             };
         }
@@ -148,13 +158,15 @@ namespace ElMagzer.Service
 
             if (cow == null)
                 return new NotFoundObjectResult(new ApiResponse(404));
+            if (weight <= 0|| TypeofCow <= 0 || string.IsNullOrWhiteSpace(TechId) || MachId <= 0 || storeId <= 0)
+                return new BadRequestObjectResult(new ApiResponse(400, "Invalid input data."));
             int existingPiecesCount = await _context.CowsPieces
         .CountAsync(cp => cp.CowId == cow.Id);
 
             int Type = existingPiecesCount + 1;
             string pieceType = mapType(Type);
 
-
+            string typeofpiece = mapT(TypeofCow);
             //var existingPiece = await _context.CowsPieces
             //                .Include(cp => cp.Batch) 
             //                .ThenInclude(b => b.Order)
@@ -186,6 +198,7 @@ namespace ElMagzer.Service
                 pieceId = pieceId,
                 PieceTybe = pieceType,
                 Tybe = Type,
+                Status_From_Device_2 = typeofpiece,
                 machien_Id_Device2 = MachId,
                 pieceWeight_In = weight,
                 techOfDevice2 = TechId,

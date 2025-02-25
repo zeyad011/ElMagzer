@@ -15,6 +15,7 @@
         public int machien_Id_Device2 { get; set; }
         public int? machien_Id_Device3 { get; set; }
         public string? Status { get; set; }
+        public string? Status_From_Device_2 { get; set; }
         public bool isExecutions { get; set; } = false;
         public int? BatchId { get; set; } 
         public Batch Batch { get; set; }
