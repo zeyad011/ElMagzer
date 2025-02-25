@@ -1492,7 +1492,7 @@ namespace ElMagzer.Service
                 CowType = cow.TypeofCows.TypeName,
                 Doctor = cow.Doctor_Id,
                 Tech = cow.techOfDevice1,
-                Create_At_Divece1 = cow.Create_At_Divece1,
+                Create_At_Divece1 = cow.Create_At_Divece1.ToString("MM-dd-yyyy"),
                 Pieces = _context.CowsPieces
             .Where(p => p.CowId == cow.Id)
             .Select(p => new CowPieceDto

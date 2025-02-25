@@ -10,7 +10,7 @@
         public string batch { get; set; }
         public string order { get; set; }
 
-        public DateTime Create_At_Divece1 { get; set; }
+        public string Create_At_Divece1 { get; set; }
         public List<CowPieceDto> Pieces { get; set; } = new List<CowPieceDto>();
     }
 }
